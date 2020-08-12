@@ -31,7 +31,7 @@ class NoteListState extends State<NoteList> {
 		}
 
     return Scaffold(
-      //backgroundColor: Color(0xff52bbc7),
+      //backgroundColor: const Color(0xFFEFEFEF),
 	    appBar: AppBar(
 		    title: Text('Notes'),
 	    ),

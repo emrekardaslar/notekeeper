@@ -6,13 +6,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
-  hexColor(String colorhexcode) {
-    String colorNew = '0xff' + colorhexcode;
-    colorNew = colorNew.replaceAll('#', '');
-    return colorNew;
-  }
-
   @override
   Widget build (BuildContext context) {
     return MaterialApp(
@@ -22,7 +15,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       home: NoteList(),
-      //home: LocalNotificationScreen(),
     );
   }
 }
