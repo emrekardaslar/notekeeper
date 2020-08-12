@@ -341,14 +341,16 @@ class NoteDetailState extends State<NoteDetail> {
 
     if (note.date != null && note.hour != null && stringToDateTime(note.date) != DateTime.now() && 
     stringToTimeOfDay(note.hour) != TimeOfDay.now())
-     notificationHelper.scheduleNotification(note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
+     
 
     if (note.id != null) {
       // Case 1: Update operation
+      notificationHelper.scheduleNotification(note.id,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
       result = await helper.updateNote(note);
     } else {
       // Case 2: Insert Operation
       result = await helper.insertNote(note);
+      notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
     }
 
     if (result == 0) 

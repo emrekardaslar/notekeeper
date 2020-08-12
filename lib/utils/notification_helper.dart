@@ -11,7 +11,7 @@ class NotificationHelper {
 
   
 
-  Future<void> scheduleNotification(String title, String description, DateTime dateTime, TimeOfDay timeOfDay) async {  
+  Future<void> scheduleNotification(int id, String title, String description, DateTime dateTime, TimeOfDay timeOfDay) async {  
     var time = new DateTime(dateTime.year, dateTime.month, dateTime.day, timeOfDay.hour, timeOfDay.minute);
     
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -26,7 +26,7 @@ class NotificationHelper {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.schedule(
-          1,
+          id,
           title,
           description,
           time,
