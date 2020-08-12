@@ -19,3 +19,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//to build: flutter build apk --release --split-per-abi --no-shrink
