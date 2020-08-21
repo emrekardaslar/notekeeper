@@ -192,6 +192,7 @@ class NoteDetailState extends State<NoteDetail> {
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: TextField(
+                    maxLines: null,
                     controller: descriptionController,
                     style: textStyle,
                     onChanged: (value) {
@@ -339,19 +340,21 @@ class NoteDetailState extends State<NoteDetail> {
     moveToLastScreen();    
     int result;
 
-    if (note.date != null && note.hour != null && stringToDateTime(note.date) != DateTime.now() && 
+    if (note.date != null && note.hour != null)
+      if (note.id != null) {
+        // Case 1: Update operation
+        result = await helper.updateNote(note);
+        if (stringToDateTime(note.date) != DateTime.now() && 
     stringToTimeOfDay(note.hour) != TimeOfDay.now())
-     
-
-    if (note.id != null) {
-      // Case 1: Update operation
-      notificationHelper.scheduleNotification(note.id,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
-      result = await helper.updateNote(note);
-    } else {
-      // Case 2: Insert Operation
-      result = await helper.insertNote(note);
-      notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
-    }
+          notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
+        
+      } else {
+        // Case 2: Insert Operation
+        result = await helper.insertNote(note);
+        if (stringToDateTime(note.date) != DateTime.now() && 
+    stringToTimeOfDay(note.hour) != TimeOfDay.now())
+        notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
+      }
 
     if (result == 0) 
       // Failure
@@ -368,11 +371,17 @@ class NoteDetailState extends State<NoteDetail> {
 
     // Case 2: User is trying to delete the old note that already has a valid ID.
     int result = await helper.deleteNote(note.id);
+    await _cancelNotification(note.id);
+    
     if (result != 0) {
       _showAlertDialog('Status', 'Note Deleted Successfully');
     } else {
       _showAlertDialog('Status', 'Error Occured while Deleting Note');
     }
+  }
+
+  Future<void> _cancelNotification(int id) async {
+    await notificationHelper.flutterLocalNotificationsPlugin.cancel(id);
   }
 
   void _showAlertDialog(String title, String message) {

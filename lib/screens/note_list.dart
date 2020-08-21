@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:notekeeper/models/note.dart';
 import 'package:notekeeper/screens/note_detail.dart';
 import 'package:notekeeper/utils/database_helper.dart';
+import 'package:notekeeper/utils/notification_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -21,7 +22,7 @@ class NoteListState extends State<NoteList> {
 	DatabaseHelper databaseHelper = DatabaseHelper();
 	List<Note> noteList;
 	int count = 0;
-
+  NotificationHelper notificationHelper = new NotificationHelper();
 	@override
   Widget build(BuildContext context) {
 
@@ -111,6 +112,7 @@ class NoteListState extends State<NoteList> {
 	void _delete(BuildContext context, Note note) async {
 
 		int result = await databaseHelper.deleteNote(note.id);
+    await notificationHelper.flutterLocalNotificationsPlugin.cancel(note.id);
 		if (result != 0) {
 			_showSnackBar(context, 'Note Deleted Successfully');
 			updateListView();
@@ -157,7 +159,7 @@ class NoteListState extends State<NoteList> {
     return datesToSchedule;
   }
 
-   DateTime stringToDateTime(String dateTime) {
+  DateTime stringToDateTime(String dateTime) {
     DateTime tempDate = DateTime.now();
     // ignore: prefer_is_not_empty
     if (!dateTime.isEmpty) tempDate = new DateFormat("MMM dd, yy").parse(dateTime);
@@ -171,7 +173,6 @@ class NoteListState extends State<NoteList> {
     final format = DateFormat.Hm();
     return format.format(dt);
   }
-
 
 }
 
