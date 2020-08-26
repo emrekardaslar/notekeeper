@@ -60,13 +60,13 @@ class NoteListState extends State<NoteList> {
 			itemCount: count,
 			itemBuilder: (BuildContext context, int position) {
 				return Card(
-					color: Colors.white,
+					//color: Colors.white,
 					elevation: 2.0,
 					child: ListTile(
 
 						leading: CircleAvatar(
 							backgroundColor: getPriorityColor(this.noteList[position].priority),
-							child: Icon(Icons.keyboard_arrow_right),
+							//child: Icon(Icons.keyboard_arrow_right),
 						),
 
 						title: Text(this.noteList[position].title, style: titleStyle,),

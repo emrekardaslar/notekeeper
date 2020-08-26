@@ -213,7 +213,7 @@ class NoteDetailState extends State<NoteDetail> {
                     children: <Widget>[
                       Expanded(
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
+                          color: Theme.of(context).accentColor,
                           textColor: Theme.of(context).primaryColorLight,
                           child: Text(
                             'Save',
@@ -231,7 +231,7 @@ class NoteDetailState extends State<NoteDetail> {
                       ),
                       Expanded(
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
+                          color: Theme.of(context).accentColor,
                           textColor: Theme.of(context).primaryColorLight,
                           child: Text(
                             'Delete',

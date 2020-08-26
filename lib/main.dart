@@ -13,6 +13,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        accentColor: Colors.indigo
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        accentColor: Colors.indigo
       ),
       home: NoteList(),
     );
