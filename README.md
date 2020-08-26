@@ -1,6 +1,6 @@
 # notekeeper
 
-A new Flutter project.
+Flutter project for note keeping and scheduling notifications for notes
 
 ## Getting Started
 

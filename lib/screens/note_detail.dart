@@ -318,7 +318,6 @@ class NoteDetailState extends State<NoteDetail> {
     DateTime tempDate = DateTime.now();
     // ignore: prefer_is_not_empty
     if (!dt.isEmpty) tempDate = new DateFormat("MMM dd, yy").parse(dt);
-
     return tempDate;
   }
 
@@ -344,15 +343,13 @@ class NoteDetailState extends State<NoteDetail> {
       if (note.id != null) {
         // Case 1: Update operation
         result = await helper.updateNote(note);
-        if (stringToDateTime(note.date) != DateTime.now() && 
-    stringToTimeOfDay(note.hour) != TimeOfDay.now())
+        if (_notNow(note) && !_isLate(note))
           notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
         
       } else {
         // Case 2: Insert Operation
         result = await helper.insertNote(note);
-        if (stringToDateTime(note.date) != DateTime.now() && 
-    stringToTimeOfDay(note.hour) != TimeOfDay.now())
+        if (_notNow(note) && !_isLate(note))
         notificationHelper.scheduleNotification(result,note.title, note.description, stringToDateTime(note.date),stringToTimeOfDay(note.hour));
       }
 
@@ -361,6 +358,58 @@ class NoteDetailState extends State<NoteDetail> {
       _showAlertDialog('Status', 'Problem Saving Note');
 
   }
+  //If time is not set on now 
+  bool _notNow(Note note) {
+    if (stringToDateTime(note.date) != DateTime.now() && 
+    stringToTimeOfDay(note.hour) != TimeOfDay.now())
+      return true;
+    else
+      return false;
+  }
+
+  bool _isLate(Note note) {
+    if (_isDateLate(note))
+      return true;
+
+    else if (stringToDateTime(note.date).day == (DateTime.now().day)) {
+      if (stringToTimeOfDay(note.hour).hour.compareTo(TimeOfDay.now().hour) < 0) 
+        return true;
+      else if (stringToTimeOfDay(note.hour).hour.compareTo(TimeOfDay.now().hour) == 0) {
+        if (stringToTimeOfDay(note.hour).minute.compareTo(TimeOfDay.now().minute) < 0) {
+          return true;
+        }
+        else
+          return false;
+      } 
+      else
+        return false;
+    }
+    else
+      return false;
+  }
+
+
+  bool _isDateLate(Note note) {
+    if (stringToDateTime(note.date).year < (DateTime.now().year))
+      return true;
+    else if (stringToDateTime(note.date).year == (DateTime.now().year)) {
+      if (stringToDateTime(note.date).month < (DateTime.now().month)) {
+        return true;
+      }
+      else if (stringToDateTime(note.date).month == (DateTime.now().month)) {
+        if (stringToDateTime(note.date).day < (DateTime.now().day)) {
+          return true;
+        }
+        else
+          return false;
+      }
+      else
+        return false;
+    }
+    else 
+      return false;
+  }
+  
 
   void _delete() async {
     moveToLastScreen();
