@@ -41,7 +41,7 @@ class NoteListState extends State<NoteList> {
 
 	    floatingActionButton: FloatingActionButton(
 		    onPressed: () {
-		      navigateToDetail(Note('', '', '', 2), 'Add Note');
+		      navigateToDetail(Note('', '', '', 2, 0), 'Add Note');
 		    },
 
 		    tooltip: 'Add Note',
@@ -109,20 +109,31 @@ class NoteListState extends State<NoteList> {
 		}
 	}
 
-	void _delete(BuildContext context, Note note) async {
-
-		int result = await databaseHelper.deleteNote(note.id);
-    await notificationHelper.flutterLocalNotificationsPlugin.cancel(note.id);
-		if (result != 0) {
-			_showSnackBar(context, 'Note Deleted Successfully');
-			updateListView();
-		}
+	void _delete(BuildContext context, Note note) async { //** 
+    _showSnackBar(context, 'Note Deleted Successfully',note);
+    await databaseHelper.markNoteAsDeleted(note.id,1);
+    updateListView();
 	}
 
-	void _showSnackBar(BuildContext context, String message) {
-
-		final snackBar = SnackBar(content: Text(message));
-		Scaffold.of(context).showSnackBar(snackBar);
+	void _showSnackBar(BuildContext context, String message, Note note){
+		final snackBar = SnackBar(
+      content: Text(message),
+      action: SnackBarAction(
+        label: "UNDO", 
+        onPressed: ()  async { 
+          await databaseHelper.markNoteAsDeleted(note.id,0);
+          updateListView();
+         } //**
+        ),
+      );
+		Scaffold.of(context).showSnackBar(snackBar).closed.then((SnackBarClosedReason reason) async {
+      print(reason);
+      if (reason == SnackBarClosedReason.timeout || reason == SnackBarClosedReason.swipe) {
+        await databaseHelper.deleteNote(note.id);
+        await notificationHelper.flutterLocalNotificationsPlugin.cancel(note.id);
+        updateListView();
+      }
+    });
 	}
 
   void navigateToDetail(Note note, String title) async {

@@ -16,7 +16,7 @@ class DatabaseHelper {
 	String colPriority = 'priority';
 	String colDate = 'date';
   String colHour = 'hour';
-  
+  String colDeleted = 'deleted';
 
 	DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -42,7 +42,7 @@ class DatabaseHelper {
 		String path = directory.path + '/notes.db';
 
 		// Open/create the database at a given path
-		var notesDatabase = await openDatabase(path, version: 1, onCreate: _createDb);
+		var notesDatabase = await openDatabase(path, version: 2, onCreate: _createDb, onUpgrade: _upgradeDb);
 		return notesDatabase;
 	}
 
@@ -51,6 +51,11 @@ class DatabaseHelper {
 		await db.execute('CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, '
 				'$colDescription TEXT, $colPriority INTEGER, $colDate TEXT, $colHour TEXT)');
 	}
+
+  void _upgradeDb(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion == 1 && newVersion == 2)
+      await db.execute('ALTER TABLE $noteTable ADD $colDeleted INTEGER DEFAULT 0 ');
+  }
 
 	// Fetch Operation: Get all note objects from database
 	Future<List<Map<String, dynamic>>> getNoteMapList() async {
@@ -82,6 +87,12 @@ class DatabaseHelper {
 		return result;
 	}
 
+  Future<int> markNoteAsDeleted(int id, int deleted) async  {
+    var db = await this.database;
+    int result = await db.rawUpdate('UPDATE $noteTable SET $colDeleted = $deleted WHERE $colId = $id');
+    return result;
+  }
+
 	// Get number of Note objects in database
 	Future<int> getCount() async {
 		Database db = await this.database;
@@ -99,7 +110,9 @@ class DatabaseHelper {
 		List<Note> noteList = List<Note>();
 		// For loop to create a 'Note List' from a 'Map List'
 		for (int i = 0; i < count; i++) {
-			noteList.add(Note.fromMapObject(noteMapList[i]));
+      if (noteMapList[i]['deleted'] == 0) {
+        noteList.add(Note.fromMapObject(noteMapList[i]));
+      }
 		}
 
 		return noteList;

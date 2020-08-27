@@ -6,10 +6,11 @@ class Note {
 	String _date;
   String _hour;
 	int _priority;
+  int _deleted;
 
-	Note(this._title, this._date, this._hour, this._priority, [this._description]);
+	Note(this._title, this._date, this._hour, this._priority, [this._deleted, this._description]);
 
-	Note.withId(this._id, this._title, this._date, this._hour, this._priority, [this._description]);
+	Note.withId(this._id, this._title, this._date, this._hour, this._priority, [this._deleted, this._description]);
   
 	int get id => _id;
 
@@ -22,6 +23,8 @@ class Note {
 	String get date => _date;
 
   String get hour => _hour;
+
+  int get deleted => _deleted;
 
 	set title(String newTitle) {
 		if (newTitle.length <= 255) {
@@ -49,6 +52,9 @@ class Note {
     this._hour = newHour;
   }
 
+  set deleted(int newDeleted) {
+    this._deleted = newDeleted;
+  }
 	// Convert a Note object into a Map object
 	Map<String, dynamic> toMap() {
 
@@ -61,6 +67,7 @@ class Note {
 		map['priority'] = _priority;
 		map['date'] = _date;
     map['hour'] = _hour;
+    map['deleted'] = _deleted;
 
 		return map;
 	}
@@ -73,6 +80,7 @@ class Note {
 		this._priority = map['priority'];
 		this._date = map['date'];
     this._hour = map['hour'];
+    this._deleted = map['deleted'];
 	}
 }
 
